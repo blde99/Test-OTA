@@ -10,6 +10,7 @@
 #include <ArduinoOTA.h>
 #include <TelnetStream.h>
 
+// As we have defined ESP32_RTOS at the top of main.cpp this creates the ota_handle() function which runs on the 2nd core of ESP32.
 #if defined(ESP32_RTOS) && defined(ESP32)
 void ota_handle( void * parameter ) {
   for (;;) {
@@ -39,17 +40,6 @@ void setupOTA(const char* nameprefix, const char* ssid, const char* password) {
     delay(5000);
     ESP.restart();
   }
-
-  // Port defaults to 3232
-  // ArduinoOTA.setPort(3232); // Use 8266 port if you are working in Sloeber IDE, it is fixed there and not adjustable
-
-
-  // No authentication by default
-  // ArduinoOTA.setPassword("admin");
-
-  // Password can be set with it's md5 value as well
-  // MD5(admin) = 21232f297a57a5a743894a0e4a801fc3
-  // ArduinoOTA.setPasswordHash("21232f297a57a5a743894a0e4a801fc3");
 
   ArduinoOTA.onStart([]() {
 	//NOTE: make .detach() here for all functions called by Ticker.h library - not to interrupt transfer process in any way.
@@ -90,6 +80,7 @@ void setupOTA(const char* nameprefix, const char* ssid, const char* password) {
   Serial.print("Host Name: ");
   Serial.println(ArduinoOTA.getHostname());
 
+// As we have defined ESP32_RTOS at the top of main.cpp, this creates a task to run the ota_handle() function which runs on the 2nd core of ESP32.
 #if defined(ESP32_RTOS) && defined(ESP32)
   xTaskCreate(
     ota_handle,          /* Task function. */
